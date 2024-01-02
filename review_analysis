@@ -1,0 +1,272 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[2]:
+
+
+get_ipython().system(' pip install wordcloud')
+
+
+# In[4]:
+
+
+get_ipython().system(' pip install textblob')
+
+
+# In[1]:
+
+
+import os 
+import re
+
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from wordcloud import WordCloud
+from textblob import TextBlob
+
+
+# In[16]:
+
+
+def generate_wordcloud(text):
+    wordcloud = WordCloud(width=800, height=400, background_color='white').generate(text)
+        # Display the word cloud
+    plt.figure(figsize=(10, 7))
+    plt.imshow(wordcloud, interpolation='bilinear')
+    plt.axis('off')
+    plt.title("Word Cloud for all reviews")
+    plt.show()
+
+
+# In[3]:
+
+
+def get_sentiment(df):
+    # Compute sentiment for each review
+    df['Sentiment'] = df['Review'].apply(lambda x: TextBlob(x).sentiment.polarity)
+    # Calculate the year-on-year average sentiment
+    yearly_avg_sentiment = df.groupby('Year')['Sentiment'].mean().reset_index()
+    plt.figure(figsize=(15, 7))
+    plt.plot(yearly_avg_sentiment['Year'], yearly_avg_sentiment['Sentiment'], marker='o', color='b')
+    plt.title('Year on Year Average Sentiment')
+    plt.xlabel('Year')
+    plt.ylabel('Average Sentiment')
+    plt.grid(True, which='both', linestyle='--', linewidth=0.5)
+    plt.tight_layout()
+    plt.show()
+
+
+# In[10]:
+
+
+def get_year_wise_reviews(df):
+    review_counts = df.groupby('Year').size().reset_index(name='Number of Reviews')
+    # Plotting the review counts
+    plt.figure(figsize=(12, 6))
+    plt.plot(review_counts['Year'], review_counts['Number of Reviews'], marker='o', color='b')
+    plt.title('Number of Reviews Year-on-Year')
+    plt.xlabel('Year')
+    plt.ylabel('Number of Reviews')
+    plt.grid(True, which='both', linestyle='--', linewidth=0.5)
+    plt.tight_layout()
+    plt.show()
+
+
+# # GAP
+
+# In[4]:
+
+
+df_gap = pd.read_csv(os.path.join(os.getcwd(), 'data','gap-reviews.csv'),encoding= 'latin1')
+combined_text = ' '.join(df_gap.iloc[:, 1].astype(str))
+
+combined_text = combined_text.lower().replace('app', '')
+combined_text = combined_text.lower().replace('gap', '')
+
+
+# In[17]:
+
+
+# Generate the word cloud
+wordcloud = generate_wordcloud(combined_text)
+
+
+# In[ ]:
+
+
+get_sentiment(df_gap)
+
+
+# In[ ]:
+
+
+get_year_wise_reviews(df_gap)
+
+
+# In[ ]:
+
+
+
+
+
+# # Banana Republic
+
+# In[6]:
+
+
+df_br = pd.read_csv(os.path.join(os.getcwd(),'data', 'banana-reviews.csv'))
+combined_text = ' '.join(df_br.iloc[:, 1].astype(str))
+combined_text = combined_text.lower().replace('app', '')
+combined_text = combined_text.lower().replace('BR', '')
+
+
+# In[18]:
+
+
+# Generate the word cloud
+wordcloud = generate_wordcloud(combined_text)
+
+
+# In[8]:
+
+
+get_sentiment(df_br)
+
+
+# In[11]:
+
+
+get_year_wise_reviews(df_br)
+
+
+# # Old Navy
+
+# In[19]:
+
+
+df_old = pd.read_csv(os.path.join(os.getcwd(), 'data', 'oldnavy-reviews.csv'))
+combined_text = ' '.join(df_old.iloc[:, 1].astype(str))
+combined_text = combined_text.lower().replace('app', '')
+combined_text = combined_text.replace('old', '')
+combined_text = combined_text.replace('navy', '')
+combined_text = combined_text.replace('old navy', '')
+
+
+# In[20]:
+
+
+# Generate the word cloud
+wordcloud = generate_wordcloud(combined_text)
+
+
+# In[21]:
+
+
+get_sentiment(df_old)
+
+
+# In[22]:
+
+
+get_year_wise_reviews(df_old)
+
+
+# # Zara
+
+# In[23]:
+
+
+df_zara = pd.read_csv(os.path.join(os.getcwd(), 'data', 'Reviews_Zara.csv'))
+df_zara = df_zara.replace(np.nan, '')
+combined_text = ' '.join(df_zara.iloc[:, 1].astype(str))
+combined_text = combined_text.lower().replace('zara', '')
+combined_text = combined_text.lower().replace('app', '')
+
+
+# In[24]:
+
+
+# Generate the word cloud
+wordcloud = generate_wordcloud(combined_text)
+
+
+# In[25]:
+
+
+get_sentiment(df_zara)
+
+
+# In[26]:
+
+
+get_year_wise_reviews(df_zara)
+
+
+# # HnM
+
+# In[28]:
+
+
+df_hnm = pd.read_csv(os.path.join(os.getcwd(), 'data', 'Reviews_HM.csv'))
+combined_text = ' '.join(df_hnm.iloc[:, 2].astype(str))
+combined_text = combined_text.lower().replace('H&M', '')
+combined_text = combined_text.lower().replace('app', '')
+
+
+# In[29]:
+
+
+# Generate the word cloud
+wordcloud = generate_wordcloud(combined_text)
+
+
+# In[30]:
+
+
+get_sentiment(df_hnm)
+
+
+# In[31]:
+
+
+get_year_wise_reviews(df_hnm)
+
+
+# # Levis
+
+# In[32]:
+
+
+df_levis = pd.read_csv(os.path.join(os.getcwd(), 'data', 'Reviews_Levis.csv'))
+combined_text = ' '.join(df_levis.iloc[:, 2].astype(str))
+combined_text = combined_text.lower().replace('levis', '')
+combined_text = combined_text.lower().replace('levi', '')
+combined_text = combined_text.lower().replace('app', '')
+
+
+# In[33]:
+
+
+# Generate the word cloud
+wordcloud = generate_wordcloud(combined_text)
+
+
+# In[34]:
+
+
+get_sentiment(df_levis)
+
+
+# In[35]:
+
+
+get_year_wise_reviews(df_levis)
+
+
+# In[ ]:
+
+
+
+
