@@ -1,0 +1,90 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[9]:
+
+
+import requests
+import pandas as pd
+
+
+# In[10]:
+
+
+twitter_data = []
+
+
+# In[11]:
+
+
+api_key = 'insert your api key'
+
+
+# In[12]:
+
+
+query = 'GAP clothing OR GAP style OR fashion (good OR nice OR excellent)'
+start_date = '2006-01-01'
+end_date = '2020-12-31'
+batch_size = 50 
+total_results = 500
+
+
+# In[13]:
+
+
+all_results = []
+
+
+# In[14]:
+
+
+num_batches = total_results // batch_size
+
+for batch in range(num_batches):
+  
+    start_position = batch * batch_size
+    end_position = start_position + batch_size
+
+
+# In[15]:
+
+
+payload = {
+       'api_key': api_key,
+       'query': query,
+       'num': batch_size,
+       'start_date': start_date,
+       'end_date': end_date,
+       'start': start_position  
+   }
+response = requests.get(
+   'https://api.scraperapi.com/structured/twitter/search',params=payload)
+data = response.json()
+
+
+# In[16]:
+
+
+data.keys()
+
+
+# In[17]:
+
+
+if 'organic_results' in data:
+        search_results = data['organic_results']
+        df = pd.DataFrame(search_results)
+        if batch == 0:
+            df.to_csv('twitter_comments_2006_to_2020.csv', index=False)
+        else:
+            df.to_csv('twitter_comments_2006_to_2020.csv', index=False, mode='a', header=False)
+
+print(f'Saved all comments to CSV.')
+
+
+# In[ ]:
+
+
+
+
