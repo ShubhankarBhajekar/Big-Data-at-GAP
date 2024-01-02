@@ -1,0 +1,101 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[1]:
+
+
+import os
+import re
+import pandas as pd
+import numpy as np
+
+import statsmodels.api as sm
+import warnings
+import math
+warnings.filterwarnings("ignore")
+
+
+# In[12]:
+
+
+df_zara = pd.read_csv(os.path.join(os.getcwd(), 'data', 'Reviews_Zara.csv'))
+df_zara_fin = pd.read_excel(os.path.join(os.getcwd(), 'data', 'zara-year-wise-financials.xlsx'))
+
+
+# In[9]:
+
+
+df_zara_reviews= df_zara.groupby('Year').size().reset_index(name='Number of Reviews')
+
+
+# In[10]:
+
+
+df_zara_reviews
+
+
+# In[14]:
+
+
+yearly_average_ratings = df_zara.groupby(df_zara.columns[0])[df_zara.columns[2]].mean()
+df_zara_avg_rating = yearly_average_ratings.reset_index()
+df_zara_avg_rating.columns = ['Year', 'Average Rating']
+
+
+# In[15]:
+
+
+df_zara_data = df_zara_fin.merge(df_zara_reviews, on='Year', how='outer' )
+
+
+# In[16]:
+
+
+df_zara_data = df_zara_data.merge(df_zara_avg_rating, on ='Year', how = 'outer')
+
+
+# In[17]:
+
+
+df_zara_data.fillna(0, inplace=True)
+
+
+# In[18]:
+
+
+df_zara_data.drop(index=14, axis=1, inplace=True) 
+
+
+# In[43]:
+
+
+df_zara_data.corr()
+
+
+# In[47]:
+
+
+y = df_zara_data['Zara-Revenue']
+x = df_zara_data[['Number of Reviews', 'Average Rating']]
+y = np.log(y)
+x['Number of Reviews'] = np.log(x['Number of Reviews'] +1)
+
+
+# In[48]:
+
+
+X= sm.add_constant(x)
+log_log_reg = sm.OLS(y, X).fit()
+
+
+# In[49]:
+
+
+log_log_reg.summary()
+
+
+# In[ ]:
+
+
+
+
